@@ -1,20 +1,24 @@
 import React from 'react';
 import PokemonCard from '@/components/PokemonCard/PokemonCard';
+import { get20Pokemon } from '@/lib/pokemon';
+import { Pokemon } from '@/lib/models';
 
-function App() {
+async function Home() {
+
+  const pokemons = await get20Pokemon();
+
   return (
     <div className="p-4">
-      <PokemonCard
-        name="Pikachu"
-        imageUrl="https://assets.pokemon.com/assets/cms2/img/pokedex/full/025.png"
-        number="025"
-        types={[
-          { name: "Electric", iconUrl: "https://example.com/electric-icon.png" },
-          // Add more types as needed
-        ]}
-      />
+
+      {pokemons.map((pokemon: Pokemon) => (
+        <PokemonCard
+          key={pokemon.pokedexId}
+          pokemon={pokemon}
+        />
+      ))  
+      }
     </div>
   );
 }
 
-export default App;
+export default Home;
