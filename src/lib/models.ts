@@ -8,4 +8,5 @@ export interface Pokemon {
 export interface Type {
   name: string;
   icon: string;
+  color: string;
 }
