@@ -1,8 +1,8 @@
 require('dotenv').config();
 import { Pokemon, Type } from "./models";
 
-export async function get20Pokemon() {
-  const response = await fetch(`${process.env.HOST}/pokemon`);
+export async function get20Pokemon(page: number) {
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${(page - 1) * 20}`);
   const data = await response.json();
 
   const pokemonPromises = data.results.map(
@@ -14,6 +14,13 @@ export async function get20Pokemon() {
 
   const pokemons = await Promise.all(pokemonPromises);
   return pokemons;
+}
+
+export async function getPokemonByName(name: string){
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+  const data = await response.json();
+
+  return createPokemon(data);
 }
 
 export async function getPokemonByUrl(url: string) {
@@ -30,11 +37,18 @@ export function createPokemon(json: any) {
     return { name: typeName, icon: iconUrl, color: color};
   });
 
+  const stats = json.stats.map((stat: any) => {
+    const statName = stat.stat.name;
+    const base_stat = stat.base_stat
+    return {name: statName, base_stat: base_stat};
+  })
+
   const pokemon: Pokemon = {
     name: json.name,
     pokedexId: json.id,
     imagem: json.sprites.other["official-artwork"].front_default,
     types: types,
+    stats: stats
   };
 
   return pokemon;
